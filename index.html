@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kelvin Lyu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f6f1;
+      --fg: #18160f;
+      --fg2: #6b6655;
+      --accent: #d94f2b;
+      --accent2: #2b6cd9;
+      --accent3: #d4a82a;
+      --card: #ffffff;
+      --border: rgba(24,22,15,0.09);
+      --radius: 18px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'EB Garamond', serif;
+      overflow-x: hidden;
+    }
+
+    /* ── BLOBS ── */
+    .blob-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.42; }
+    .b1 { width: 540px; height: 540px; background: #f5d0c5; top: -120px; right: -80px; animation: bf 14s ease-in-out infinite; }
+    .b2 { width: 380px; height: 380px; background: #c5d8f5; bottom: 8%; left: -90px; animation: bf 17s ease-in-out infinite reverse; }
+    .b3 { width: 250px; height: 250px; background: #d4f0d0; top: 42%; right: 10%; animation: bf 11s ease-in-out infinite 2s; }
+    @keyframes bf {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(16px,-22px) scale(1.04); }
+      66% { transform: translate(-12px,16px) scale(0.97); }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 1.1rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(248,246,241,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700; font-size: 1.1rem;
+      letter-spacing: -0.01em; font-style: italic;
+    }
+    .nav-logo span { color: var(--accent); font-style: normal; }
+    .nav-right { display: flex; align-items: center; gap: 2.2rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; font-weight: 400; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--fg2);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--fg); }
+    .lang-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+      background: var(--fg); color: var(--bg);
+      border: none; padding: 0.38rem 0.9rem;
+      border-radius: 100px; cursor: pointer; transition: opacity 0.2s;
+    }
+    .lang-btn:hover { opacity: 0.75; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8.5rem 3.5rem 5rem;
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    /* shapes */
+    .sh { position: absolute; pointer-events: none; }
+    .sh-ring { border-radius: 50%; border: 2px solid var(--accent); opacity: 0.14; }
+    .sh-dot  { border-radius: 50%; }
+    .sh-sq   { border-radius: 6px; transform: rotate(18deg); opacity: 0.11; }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.6rem;
+      opacity: 0; animation: fu 0.7s 0.2s forwards;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.8rem, 9.5vw, 8rem);
+      font-weight: 700; line-height: 0.92; letter-spacing: -0.02em;
+      opacity: 0; animation: fu 0.7s 0.35s forwards;
+    }
+    .hero-name .italic { font-style: italic; color: var(--accent); }
+    .hero-name .cn {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.38em; font-weight: 400; font-style: normal;
+      color: var(--fg2); letter-spacing: 0.04em;
+      vertical-align: middle; margin-left: 0.3em;
+    }
+
+    .hero-sub {
+      margin-top: 2rem;
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+      font-weight: 400; line-height: 1.72;
+      color: var(--fg2); max-width: 540px;
+      font-style: italic;
+      opacity: 0; animation: fu 0.7s 0.5s forwards;
+    }
+
+    /* ── CONTACT CARDS ── */
+    .contact-block {
+      margin-top: 3rem;
+      opacity: 0; animation: fu 0.7s 0.65s forwards;
+    }
+
+    .contact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.66rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--fg2);
+      margin-bottom: 1rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 0.75rem;
+      width: fit-content;
+    }
+
+    .cc {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 0.85rem 1.3rem;
+      text-decoration: none; color: var(--fg);
+      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+      transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+      min-width: 200px;
+    }
+    .cc:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.11);
+      border-color: rgba(24,22,15,0.2);
+    }
+    .cc-ico {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .ico-e1 { background: #ffeae5; }
+    .ico-e2 { background: #e8f4ff; }
+    .ico-p  { background: #e8fff0; }
+    .ico-ig { background: #fff0f8; }
+    .ico-li { background: #eaf0ff; }
+    .ico-w  { background: #fffadf; }
+    .cc-text {}
+    .cc-type {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; font-weight: 400; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--fg2);
+      margin-bottom: 0.15rem;
+    }
+    .cc-val {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem; font-weight: 500; color: var(--fg);
+      line-height: 1.2;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 3.5rem 6rem;
+      position: relative; z-index: 1;
+    }
+
+    /* section header */
+    .sh-row { display: flex; align-items: center; gap: 1.1rem; margin-bottom: 2rem; }
+    .chip {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; background: var(--fg); color: var(--bg);
+      padding: 0.3rem 0.8rem; border-radius: 100px;
+    }
+    .sh-line { flex: 1; height: 1px; background: var(--border); max-width: 50px; }
+
+    /* cards */
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1.1rem; margin-bottom: 3.5rem;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+      transition: transform 0.25s, box-shadow 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.08); }
+    .ca { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+    .ca-r { background: var(--accent); }
+    .ca-b { background: var(--accent2); }
+    .ca-y { background: var(--accent3); }
+    .card-em { font-size: 1.9rem; margin-bottom: 0.9rem; }
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 600;
+      margin-bottom: 0.5rem; letter-spacing: -0.01em;
+    }
+    .card p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem; line-height: 1.72; color: var(--fg2);
+    }
+    .card-m {
+      margin-top: 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; font-weight: 400; letter-spacing: 0.08em;
+      color: var(--accent); text-transform: uppercase;
+    }
+
+    /* botbo banner */
+    .botbo-banner {
+      background: var(--fg); color: var(--bg);
+      border-radius: var(--radius); padding: 2.5rem 2.8rem;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 2rem; margin-bottom: 3.5rem;
+      position: relative; overflow: hidden;
+    }
+    .botbo-banner::before {
+      content: 'Botbo';
+      position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+      font-family: 'Playfair Display', serif;
+      font-size: 8rem; font-weight: 700; font-style: italic;
+      color: rgba(255,255,255,0.04); pointer-events: none; user-select: none;
+    }
+    .botbo-banner h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 3vw, 1.9rem);
+      font-weight: 600; font-style: italic;
+      letter-spacing: -0.01em; margin-bottom: 0.5rem;
+    }
+    .botbo-banner p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem; color: rgba(248,246,241,0.58);
+      max-width: 400px; line-height: 1.65;
+    }
+    .botbo-btn {
+      flex-shrink: 0;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent); color: #fff;
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.76rem; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.8rem 1.6rem; border-radius: 12px;
+      transition: opacity 0.2s, transform 0.2s; white-space: nowrap;
+    }
+    .botbo-btn:hover { opacity: 0.85; transform: scale(0.97); }
+
+    /* edu */
+    .edu-row { display: flex; gap: 1.1rem; margin-bottom: 3.5rem; }
+    .edu-block {
+      flex: 1; border-radius: var(--radius); padding: 2rem 1.8rem;
+      position: relative; overflow: hidden;
+    }
+    .edu-block.red { background: var(--accent); color: #fff; }
+    .edu-block.blue { background: var(--accent2); color: #fff; }
+    .edu-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 600; margin-bottom: 0.35rem;
+    }
+    .edu-deg {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem; opacity: 0.72; font-style: italic;
+    }
+    .edu-ghost {
+      position: absolute; bottom: -8px; right: 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem; font-weight: 700; opacity: 0.09;
+      line-height: 1; user-select: none;
+    }
+
+    /* stats */
+    .stat-row { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+    .stat-block {
+      flex: 1; min-width: 130px; border-radius: var(--radius);
+      padding: 1.5rem 1.4rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem; font-weight: 400; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      position: relative; overflow: hidden;
+    }
+    .stat-block.y { background: var(--accent3); color: var(--fg); }
+    .stat-block.o { background: var(--card); border: 1px solid var(--border); color: var(--fg2); }
+    .stat-num-big {
+      position: absolute; top: 0.2rem; right: 0.8rem;
+      font-size: 3.2rem; font-weight: 700; opacity: 0.09; line-height: 1;
+      font-family: 'Playfair Display', serif;
+      user-select: none;
+    }
+
+    /* footer */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; color: var(--fg2); letter-spacing: 0.05em;
+    }
+
+    @keyframes fu {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero, .main { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .contact-grid { grid-template-columns: 1fr 1fr; }
+      .botbo-banner { flex-direction: column; align-items: flex-start; }
+      .edu-row { flex-wrap: wrap; }
+      .edu-block { min-width: calc(50% - 0.55rem); }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+    @media (max-width: 580px) {
+      .contact-grid { grid-template-columns: 1fr; }
+      .cc { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<nav>
+  <div class="nav-logo"><em>Kelvin</em><span>.</span></div>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#about" data-en="About" data-zh="关于">About</a></li>
+      <li><a href="#education" data-en="Education" data-zh="教育背景">Education</a></li>
+      <li><a href="#contact-section" data-en="Contact" data-zh="联系">Contact</a></li>
+    </ul>
+    <button class="lang-btn" onclick="toggleLang()">中文</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <!-- deco shapes -->
+  <div class="sh sh-ring" style="width:110px;height:110px;top:55px;right:230px;"></div>
+  <div class="sh sh-dot"  style="width:13px;height:13px;background:var(--accent3);opacity:0.5;top:105px;right:370px;"></div>
+  <div class="sh sh-sq"  style="width:52px;height:52px;background:var(--accent2);bottom:140px;right:100px;"></div>
+  <div class="sh sh-ring" style="width:55px;height:55px;border-color:var(--accent2);bottom:90px;left:70px;opacity:0.13;"></div>
+
+  <div class="hero-eyebrow" data-en="Open to connect · Los Angeles" data-zh="欢迎联系 · 洛杉矶">Open to connect · Los Angeles</div>
+
+  <h1 class="hero-name">
+    Kelvin<br>
+    <span class="italic">Lyu</span><span class="cn" data-en="吕庭锐" data-zh="吕庭锐">吕庭锐</span>
+  </h1>
+
+  <p class="hero-sub" data-en="Engineer · Founder · Builder. I make machines that cook food and companies that run themselves." data-zh="工程师 · 创始人 · 建造者。我造能做饭的机器，也在建一家自己运转的公司。">
+    Engineer · Founder · Builder. I make machines that cook food and companies that run themselves.
+  </p>
+
+  <!-- Contact -->
+  <div class="contact-block" id="contact-section">
+    <div class="contact-label" data-en="Get in touch" data-zh="联系方式">Get in touch</div>
+    <div class="contact-grid">
+      <a href="mailto:alpha@botbo.net" class="cc">
+        <span class="cc-ico ico-e1">📧</span>
+        <div class="cc-text">
+          <div class="cc-type" data-en="Work Email" data-zh="工作邮箱">Work Email</div>
+          <div class="cc-val">alpha@botbo.net</div>
+        </div>
+      </a>
+      <a href="mailto:lutingrui745@gmail.com" class="cc">
+        <span class="cc-ico ico-e2">✉️</span>
+        <div class="cc-text">
+          <div class="cc-type" data-en="Personal Email" data-zh="个人邮箱">Personal Email</div>
+          <div class="cc-val">lutingrui745@gmail.com</div>
+        </div>
+      </a>
+      <a href="tel:+18188171939" class="cc">
+        <span class="cc-ico ico-p">📱</span>
+        <div class="cc-text">
+          <div class="cc-type" data-en="Phone" data-zh="电话">Phone</div>
+          <div class="cc-val">+1 (818) 817-1939</div>
+        </div>
+      </a>
+      <a href="https://instagram.com/kelvin_lyu_" target="_blank" class="cc">
+        <span class="cc-ico ico-ig">📸</span>
+        <div class="cc-text">
+          <div class="cc-type">Instagram</div>
+          <div class="cc-val">@kelvin_lyu_</div>
+        </div>
+      </a>
+      <a href="https://www.linkedin.com/in/kelvin-tingrui-lyu/" target="_blank" class="cc">
+        <span class="cc-ico ico-li">💼</span>
+        <div class="cc-text">
+          <div class="cc-type">LinkedIn</div>
+          <div class="cc-val">kelvin-tingrui-lyu</div>
+        </div>
+      </a>
+      <a href="https://www.botbo.net" target="_blank" class="cc">
+        <span class="cc-ico ico-w">🤖</span>
+        <div class="cc-text">
+          <div class="cc-type" data-en="Venture" data-zh="公司">Venture</div>
+          <div class="cc-val">botbo.net</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Botbo banner -->
+  <div class="botbo-banner">
+    <div>
+      <h3 data-en="Building Botbo — Automated Fast Food" data-zh="正在建造 Botbo — 全自动快餐机器人">Building Botbo — Automated Fast Food</h3>
+      <p data-en="A fully robotic food system targeting $4.99 meals with near-zero labor cost. We don't sell to restaurants — we replace them." data-zh="全自动机器人餐饮系统，目标售价 $4.99，人工成本趋近于零。我们不是卖给餐厅——我们取代餐厅。">
+        A fully robotic food system targeting $4.99 meals with near-zero labor cost. We don't sell to restaurants — we replace them.
+      </p>
+    </div>
+    <a href="https://www.botbo.net" target="_blank" class="botbo-btn" data-en="Visit Botbo →" data-zh="访问 Botbo →">Visit Botbo →</a>
+  </div>
+
+  <!-- About -->
+  <div id="about" style="scroll-margin-top:80px;">
+    <div class="sh-row">
+      <div class="chip" data-en="About" data-zh="关于">About</div>
+      <div class="sh-line"></div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="ca ca-r"></div>
+      <div class="card-em">🤖</div>
+      <h3 data-en="Hardware Founder" data-zh="硬件创始人">Hardware Founder</h3>
+      <p data-en="Building robotic food automation from scratch — mechanical design, firmware, and operations. Prototype complete, commercial build underway." data-zh="从零开始构建机器人餐饮自动化——机械设计、固件、运营全栈。原型机已完成，商用版本建设中。">Building robotic food automation from scratch — mechanical design, firmware, and operations. Prototype complete, commercial build underway.</p>
+      <div class="card-m" data-en="Founder @ Botbo" data-zh="创始人 @ Botbo">Founder @ Botbo</div>
+    </div>
+    <div class="card">
+      <div class="ca ca-b"></div>
+      <div class="card-em">⚡</div>
+      <h3 data-en="Electrical Engineer" data-zh="电气工程师">Electrical Engineer</h3>
+      <p data-en="Embedded systems, motor control, and robotics hardware. From circuit board to full system integration." data-zh="专注嵌入式系统、电机控制与机器人硬件，从电路板到系统集成全程覆盖。">Embedded systems, motor control, and robotics hardware. From circuit board to full system integration.</p>
+      <div class="card-m" data-en="ECE · USC Viterbi" data-zh="电气与计算机工程 · 南加大">ECE · USC Viterbi</div>
+    </div>
+    <div class="card">
+      <div class="ca ca-y"></div>
+      <div class="card-em">🌍</div>
+      <h3 data-en="Builder & Thinker" data-zh="建造者与思考者">Builder & Thinker</h3>
+      <p data-en="Interested in automation, institutional design, and the future of labor. Long-term thinker, short-term doer." data-zh="关注自动化、制度设计与劳动力的未来。长远思考，脚踏实地。">Interested in automation, institutional design, and the future of labor. Long-term thinker, short-term doer.</p>
+      <div class="card-m" data-en="Based in Los Angeles" data-zh="驻地 洛杉矶">Based in Los Angeles</div>
+    </div>
+  </div>
+
+  <!-- Education -->
+  <div id="education" style="scroll-margin-top:80px;">
+    <div class="sh-row">
+      <div class="chip" data-en="Education" data-zh="教育背景">Education</div>
+      <div class="sh-line"></div>
+    </div>
+  </div>
+  <div class="edu-row">
+    <div class="edu-block red">
+      <div class="edu-name" data-en="University of Southern California" data-zh="南加州大学">University of Southern California</div>
+      <div class="edu-deg" data-en="M.S. Electrical & Computer Engineering" data-zh="电气与计算机工程 硕士">M.S. Electrical & Computer Engineering</div>
+      <div class="edu-ghost">USC</div>
+    </div>
+    <div class="edu-block blue">
+      <div class="edu-name" data-en="Tsinghua University" data-zh="清华大学">Tsinghua University</div>
+      <div class="edu-deg" data-en="B.S. / B.E. Undergraduate" data-zh="本科 工学学士">B.S. / B.E. Undergraduate</div>
+      <div class="edu-ghost">THU</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-row">
+    <div class="stat-block y">
+      <div class="stat-num-big">$</div>
+      <span data-en="$4.99 Target Price" data-zh="目标售价 $4.99">$4.99 Target Price</span>
+    </div>
+    <div class="stat-block o">
+      <div class="stat-num-big">≈0</div>
+      <span data-en="~Zero Labor Cost" data-zh="人工成本趋零">~Zero Labor Cost</span>
+    </div>
+    <div class="stat-block o">
+      <div class="stat-num-big">📍</div>
+      <span data-en="Los Angeles · South Bay" data-zh="洛杉矶 · 南湾">Los Angeles · South Bay</span>
+    </div>
+    <div class="stat-block y">
+      <div class="stat-num-big">⚙</div>
+      <span data-en="Hardware First" data-zh="硬件优先">Hardware First</span>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2025 Kelvin Lyu · 吕庭锐</p>
+  <p data-en="Los Angeles, California" data-zh="美国 加利福尼亚州 洛杉矶">Los Angeles, California</p>
+</footer>
+
+<script>
+  let isZh = false;
+  function toggleLang() {
+    isZh = !isZh;
+    document.querySelector('.lang-btn').textContent = isZh ? 'EN' : '中文';
+    document.documentElement.lang = isZh ? 'zh' : 'en';
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.textContent = isZh ? el.dataset.zh : el.dataset.en;
+    });
+  }
+</script>
+</body>
+</html>
