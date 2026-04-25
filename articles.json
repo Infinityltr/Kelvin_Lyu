@@ -1,0 +1,14 @@
+{
+  "articles": [
+    {
+      "id": "example-philosophy-001",
+      "title": "On the Examined Life",
+      "category": "哲学",
+      "date": "2025-06-01",
+      "readTime": 5,
+      "excerpt": "Socrates said an unexamined life is not worth living. But in a world that rewards action above reflection, what does it cost to stop and ask?",
+      "image": "",
+      "content": "<p>This is a sample article. Replace this content with your own writing.</p><p>You can use <strong>HTML</strong> in the content field — paragraphs, headings, blockquotes, images, and more.</p><blockquote>The unexamined life is not worth living. — Socrates</blockquote><p>Delete this sample entry from <code>articles.json</code> when you're ready to publish your first real article.</p>"
+    }
+  ]
+}

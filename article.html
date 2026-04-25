@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Article · Kelvin Lyu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f6f1; --fg: #18160f; --fg2: #6b6655;
+      --accent: #d94f2b; --accent2: #2b6cd9; --accent3: #d4a82a;
+      --card: #ffffff; --border: rgba(24,22,15,0.09); --radius: 18px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--fg); font-family: 'EB Garamond', serif; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 1.1rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(248,246,241,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem;
+      letter-spacing: -0.01em; font-style: italic; text-decoration: none; color: var(--fg);
+    }
+    .nav-logo span { color: var(--accent); font-style: normal; }
+    .nav-back {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 400;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg2);
+      text-decoration: none; transition: color 0.2s;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .nav-back:hover { color: var(--fg); }
+
+    .article-wrap {
+      max-width: 720px; margin: 0 auto;
+      padding: 7rem 2.5rem 6rem;
+      position: relative; z-index: 1;
+    }
+
+    .article-meta-top { margin-bottom: 2rem; }
+    .article-cat {
+      font-family: 'DM Mono', monospace; font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .article-date {
+      font-family: 'DM Mono', monospace; font-size: 0.64rem;
+      color: var(--fg2); letter-spacing: 0.08em; opacity: 0.7;
+    }
+
+    .article-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 700; line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+    .article-title em { font-style: italic; color: var(--accent); }
+
+    .article-excerpt-lead {
+      font-family: 'EB Garamond', serif; font-style: italic;
+      font-size: 1.25rem; color: var(--fg2); line-height: 1.7;
+      margin-bottom: 2.5rem; padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .article-hero-img {
+      width: 100%; border-radius: 14px; margin-bottom: 2.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    /* Article body typography */
+    .article-body {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.18rem; line-height: 1.85;
+      color: var(--fg);
+    }
+    .article-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em;
+      margin: 2.5rem 0 0.9rem; line-height: 1.2;
+    }
+    .article-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 600;
+      margin: 2rem 0 0.6rem;
+    }
+    .article-body p { margin-bottom: 1.4rem; }
+    .article-body blockquote {
+      border-left: 3px solid var(--accent);
+      margin: 2rem 0; padding: 0.8rem 1.5rem;
+      font-style: italic; color: var(--fg2);
+      background: rgba(217,79,43,0.04);
+      border-radius: 0 8px 8px 0;
+    }
+    .article-body img {
+      width: 100%; border-radius: 10px; margin: 1.5rem 0;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+    .article-body a { color: var(--accent2); text-decoration: underline; text-decoration-color: transparent; transition: text-decoration-color 0.2s; }
+    .article-body a:hover { text-decoration-color: var(--accent2); }
+    .article-body ul, .article-body ol { padding-left: 1.8rem; margin-bottom: 1.4rem; }
+    .article-body li { margin-bottom: 0.4rem; }
+    .article-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+    /* Bottom nav */
+    .article-bottom {
+      margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .bottom-back {
+      font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; color: var(--fg2);
+      border: 1.5px solid var(--border); padding: 0.55rem 1.1rem; border-radius: 100px;
+      transition: all 0.2s;
+    }
+    .bottom-back:hover { color: var(--fg); border-color: var(--fg); }
+
+    footer {
+      position: relative; z-index: 1; border-top: 1px solid var(--border);
+      padding: 1.5rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    footer p { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--fg2); letter-spacing: 0.05em; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .article-wrap { padding: 6rem 1.5rem 4rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo"><em>Kelvin</em><span>.</span></a>
+  <a href="writing.html" class="nav-back">← All Writing</a>
+</nav>
+
+<div class="article-wrap" id="article-wrap">
+  <!-- Populated by JS -->
+</div>
+
+<footer>
+  <p>© 2025 Kelvin Lyu · 吕庭锐</p>
+  <p>Los Angeles, California</p>
+</footer>
+
+<script>
+  const CAT_COLORS = {
+    '世界': '#d94f2b', '哲学': '#2b6cd9', '文学诗歌': '#7c4db8',
+    '科学': '#1a9e6f', '艺术': '#d4a82a', '生活': '#e07a50', '旅行': '#2a9ed4',
+  };
+  const CAT_EMOJI = {
+    '世界': '🌐', '哲学': '🏛️', '文学诗歌': '📜',
+    '科学': '🔬', '艺术': '🎨', '生活': '☕', '旅行': '✈️',
+  };
+
+  async function loadArticle() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    const wrap = document.getElementById('article-wrap');
+
+    if (!id) {
+      wrap.innerHTML = '<p style="font-family:\'EB Garamond\',serif;color:var(--fg2);padding-top:2rem;">Article not found. <a href="writing.html">← Back to writing</a></p>';
+      return;
+    }
+
+    try {
+      const res = await fetch('articles.json');
+      const data = await res.json();
+      const article = (data.articles || []).find(a => a.id === id);
+
+      if (!article) {
+        wrap.innerHTML = '<p style="font-family:\'EB Garamond\',serif;color:var(--fg2);padding-top:2rem;">Article not found. <a href="writing.html">← Back to writing</a></p>';
+        return;
+      }
+
+      document.title = `${article.title} · Kelvin Lyu`;
+
+      const color = CAT_COLORS[article.category] || 'var(--accent)';
+      const emoji = CAT_EMOJI[article.category] || '📝';
+
+      wrap.innerHTML = `
+        <div class="article-meta-top">
+          <div class="article-cat" style="color:${color}">${emoji} ${article.category}</div>
+          <div class="article-date">${article.date}${article.readTime ? ' · ' + article.readTime + ' min read' : ''}</div>
+        </div>
+
+        <h1 class="article-title">${article.title}</h1>
+        <p class="article-excerpt-lead">${article.excerpt}</p>
+
+        ${article.image ? `<img class="article-hero-img" src="${article.image}" alt="${article.title}"/>` : ''}
+
+        <div class="article-body">${article.content}</div>
+
+        <div class="article-bottom">
+          <a href="writing.html" class="bottom-back">← All Writing</a>
+        </div>
+      `;
+    } catch(e) {
+      wrap.innerHTML = '<p style="font-family:\'EB Garamond\',serif;color:var(--fg2);padding-top:2rem;">Could not load article. <a href="writing.html">← Back to writing</a></p>';
+    }
+  }
+
+  loadArticle();
+</script>
+</body>
+</html>

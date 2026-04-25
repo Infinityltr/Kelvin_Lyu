@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Writing · Kelvin Lyu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f6f1; --fg: #18160f; --fg2: #6b6655;
+      --accent: #d94f2b; --accent2: #2b6cd9; --accent3: #d4a82a;
+      --card: #ffffff; --border: rgba(24,22,15,0.09); --radius: 18px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--fg); font-family: 'EB Garamond', serif; overflow-x: hidden; }
+
+    .blob-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.35; }
+    .b1 { width: 540px; height: 540px; background: #f5d0c5; top: -120px; right: -80px; animation: bf 14s ease-in-out infinite; }
+    .b2 { width: 380px; height: 380px; background: #c5d8f5; bottom: 8%; left: -90px; animation: bf 17s ease-in-out infinite reverse; }
+    @keyframes bf {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(16px,-22px) scale(1.04); }
+      66% { transform: translate(-12px,16px) scale(0.97); }
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 1.1rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(248,246,241,0.82);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem;
+      letter-spacing: -0.01em; font-style: italic; text-decoration: none; color: var(--fg);
+    }
+    .nav-logo span { color: var(--accent); font-style: normal; }
+    .nav-right { display: flex; align-items: center; gap: 2.2rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 400;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg2);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--fg); }
+
+    .page-wrap {
+      max-width: 1200px; margin: 0 auto;
+      padding: 7rem 3.5rem 6rem;
+      position: relative; z-index: 1;
+    }
+
+    .page-header { margin-bottom: 3rem; }
+    .page-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.7rem; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1rem; display: flex; align-items: center; gap: 0.8rem;
+    }
+    .page-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700; line-height: 0.95; letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .page-title em { font-style: italic; color: var(--accent); }
+    .page-sub {
+      font-family: 'EB Garamond', serif; font-style: italic;
+      font-size: 1.15rem; color: var(--fg2); max-width: 480px; line-height: 1.65;
+    }
+
+    /* Category filters */
+    .cat-filters {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 3rem;
+    }
+    .cat-btn {
+      font-family: 'DM Mono', monospace; font-size: 0.66rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border: 1.5px solid var(--border); background: var(--card);
+      color: var(--fg2); padding: 0.4rem 0.95rem; border-radius: 100px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .cat-btn:hover { border-color: var(--fg2); color: var(--fg); }
+    .cat-btn.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+    /* Articles grid */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .article-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      text-decoration: none; color: var(--fg);
+      box-shadow: 0 2px 14px rgba(0,0,0,0.04);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column;
+      opacity: 0; animation: fu 0.5s forwards;
+    }
+    .article-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,0.09); }
+
+    .article-card-img {
+      width: 100%; height: 200px; object-fit: cover;
+    }
+    .article-card-img-placeholder {
+      width: 100%; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+    .article-card-body { padding: 1.5rem 1.6rem 1.8rem; flex: 1; display: flex; flex-direction: column; }
+    .article-card-cat {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .article-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 600; line-height: 1.3;
+      margin-bottom: 0.7rem; letter-spacing: -0.01em;
+    }
+    .article-card-excerpt {
+      font-family: 'EB Garamond', serif; font-size: 1rem;
+      color: var(--fg2); line-height: 1.7; font-style: italic; flex: 1;
+    }
+    .article-card-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 1.2rem;
+    }
+    .article-card-date {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      color: var(--fg2); letter-spacing: 0.06em; opacity: 0.7;
+    }
+    .article-card-read {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      color: var(--fg2); letter-spacing: 0.06em; opacity: 0.7;
+    }
+
+    .empty-state {
+      grid-column: 1/-1;
+      font-family: 'EB Garamond', serif; font-style: italic;
+      color: var(--fg2); font-size: 1.1rem; padding: 3rem 0;
+    }
+
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.8rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1200px; margin: 0 auto;
+    }
+    footer p { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--fg2); letter-spacing: 0.05em; }
+
+    @keyframes fu { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .page-wrap { padding: 6rem 1.5rem 4rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob-bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><em>Kelvin</em><span>.</span></a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="writing.html" class="active">Writing</a></li>
+      <li><a href="index.html#education">Education</a></li>
+      <li><a href="index.html#contact-section">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <div class="page-eyebrow">Words & Ideas</div>
+    <h1 class="page-title">My <em>Writing</em></h1>
+    <p class="page-sub">Thoughts on the world, philosophy, literature, science, art, life, and travel.</p>
+  </div>
+
+  <div class="cat-filters" id="cat-filters">
+    <button class="cat-btn active" data-cat="all" onclick="filterCat('all', this)">All</button>
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="articles-grid" id="articles-grid">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Kelvin Lyu · 吕庭锐</p>
+  <p>Los Angeles, California</p>
+</footer>
+
+<script>
+  const CATEGORIES = ['世界', '哲学', '文学诗歌', '科学', '艺术', '生活', '旅行'];
+  const CAT_COLORS = {
+    '世界': '#d94f2b', '哲学': '#2b6cd9', '文学诗歌': '#7c4db8',
+    '科学': '#1a9e6f', '艺术': '#d4a82a', '生活': '#e07a50', '旅行': '#2a9ed4',
+  };
+  const CAT_EMOJI = {
+    '世界': '🌐', '哲学': '🏛️', '文学诗歌': '📜',
+    '科学': '🔬', '艺术': '🎨', '生活': '☕', '旅行': '✈️',
+  };
+
+  let allArticles = [];
+  let currentCat = 'all';
+
+  async function init() {
+    try {
+      const res = await fetch('articles.json');
+      const data = await res.json();
+      allArticles = data.articles || [];
+    } catch(e) {
+      allArticles = [];
+    }
+
+    // Build category filter buttons
+    const filtersEl = document.getElementById('cat-filters');
+    // Only show categories that have articles
+    const usedCats = [...new Set(allArticles.map(a => a.category))];
+    CATEGORIES.filter(c => usedCats.includes(c)).forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'cat-btn';
+      btn.dataset.cat = cat;
+      btn.textContent = `${CAT_EMOJI[cat]} ${cat}`;
+      btn.onclick = () => filterCat(cat, btn);
+      filtersEl.appendChild(btn);
+    });
+
+    renderArticles(allArticles);
+  }
+
+  function filterCat(cat, btnEl) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+    const filtered = cat === 'all' ? allArticles : allArticles.filter(a => a.category === cat);
+    renderArticles(filtered);
+  }
+
+  function renderArticles(articles) {
+    const grid = document.getElementById('articles-grid');
+    if (!articles.length) {
+      grid.innerHTML = '<p class="empty-state">No articles in this category yet.</p>';
+      return;
+    }
+    grid.innerHTML = articles.map((a, i) => `
+      <a href="article.html?id=${a.id}" class="article-card" style="animation-delay:${i * 0.06}s">
+        ${a.image
+          ? `<img class="article-card-img" src="${a.image}" alt="${a.title}" loading="lazy"/>`
+          : `<div class="article-card-img-placeholder" style="background:${(CAT_COLORS[a.category]||'#ccc')}18">${CAT_EMOJI[a.category]||'📝'}</div>`
+        }
+        <div class="article-card-body">
+          <div class="article-card-cat" style="color:${CAT_COLORS[a.category]||'var(--accent)'}">${CAT_EMOJI[a.category]||''} ${a.category}</div>
+          <div class="article-card-title">${a.title}</div>
+          <div class="article-card-excerpt">${a.excerpt}</div>
+          <div class="article-card-meta">
+            <span class="article-card-date">${a.date}</span>
+            ${a.readTime ? `<span class="article-card-read">${a.readTime} min read</span>` : ''}
+          </div>
+        </div>
+      </a>
+    `).join('');
+  }
+
+  init();
+</script>
+</body>
+</html>
